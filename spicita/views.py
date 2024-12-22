@@ -1,5 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.contrib.auth.decorators import login_required
 from spicita.models import Dish, Extra, OrderItem, Order
+from users.models import Customer
 from spicita.forms import OrderForm
 import googlemaps
 # Create your views here.
@@ -12,14 +14,15 @@ def home(request):
         context = {'dishes': dishes}
         return render(request, 'spicita/home.html', context)
     
+@login_required(login_url='login', redirect_field_name='next')   
 def buy_food(request, dish_name):
     '''view for buying a particular dish'''
     dish = Dish.objects.get(name=dish_name)
     extras = dish.extras.all()
+    customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         form = OrderForm(data=request.POST)
         if form.is_valid():
-            print(request.POST)
             lat = request.POST.get('latitude')
             lon = request.POST.get('longitude')
             """code for google maps, doesn't work cos no google atm card
@@ -30,8 +33,12 @@ def buy_food(request, dish_name):
             distance = directions[0]['legs'][0]['distance']['text']
             duration = directions[0]['legs'][0]['duration']['text']"""
             new_order = form.save(commit=False)
-            new_order.customer = request.user
-            new_order.address = f"{request.POST['address']} {lat} {lon}"
+            new_order.customer = customer
+            if lat and lon:
+                new_order.address = f"{lat} {lon}"
+            else:
+                new_order.address = request.POST.get('address')
+            new_order.note = request.POST['note']
             new_order.save()
             # fetch selected extras
             selected_extras = [{'extra': request.POST[f"selectExtra{ extra.name }"],
@@ -54,7 +61,7 @@ def buy_food(request, dish_name):
             return redirect('pay', new_order.ticket)
     else:
         form = OrderForm()
-    context = {'dish': dish, 'extras': extras, 'form': form}
+    context = {'dish': dish, 'extras': extras, 'form': form, 'custumer': customer}
     return render(request, 'spicita/buyfood.html', context)
 
 def pay(request, order_ticket):

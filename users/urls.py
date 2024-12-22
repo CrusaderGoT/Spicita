@@ -6,4 +6,5 @@ app_label = "users"
 
 urlpatterns = [
     path('sign-up', views.create_customer, name='sign-up'),
+    path('login', views.login, name='login'),
 ]

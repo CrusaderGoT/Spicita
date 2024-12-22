@@ -179,7 +179,7 @@
       </nav>
     </div>
     
-    <form action="{% url 'buyfood' dish.name %}" method="post" id="FormId">
+    <form action="{% url 'buyfood' dish.name %}" method="post" id="FormId" onsubmit="return validateForm()">
       {% csrf_token %}
     <!--main dish col col-md-3 mb-3 text-center mx-auto-->
     <div class="text-center d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
@@ -276,11 +276,14 @@
               <ul class="list-unstyled mt-3 mb-4" id="extraList"></ul>
 
               <hr>
-              <input type="radio" name="addressType" id="currentLocation" value="currentLocation" checked>
+              <p id="modalMessage1" class="text-warning"></p>
+
+              <input type="radio" name="addressType" id="currentLocation" value="currentLocation" onchange="toggleAddressInputSection()">
               <label for="currentLocation">Use Current Location</label>
           
-              <input type="radio" name="addressType" id="inputAddress" value="inputAddress">
+              <input type="radio" name="addressType" id="inputAddress" value="inputAddress" onchange="toggleAddressInputSection()">
               <label for="inputAddress">Input Address</label>
+
               <hr>
 
               <div id="addressInputSection">
@@ -288,7 +291,7 @@
                 <textarea class="form-control" id="addressId" rows="3" name="address">customer saved addy here...</textarea>
               </div>
               
-              <br>
+              <br id="breakId">
 
               <div id="noteInputSection">
                 <label for="noteId" class="form-label">Note:</label>
@@ -301,7 +304,7 @@
           </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save changes</button>
+              <button type="submit" class="btn btn-primary">Confirm</button>
             </div>
           </div>
         </div>
@@ -339,38 +342,46 @@
         });
       </script>
       
+      <!--script for getting longitude and latitude-->
       <script>
         function getUserLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                        sendCoordinatesToServer(latitude, longitude);  // Call the function with coordinates
-                        // You can send this information to your server or perform other actions
-                    },
-                    function (error) {
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                console.error("User denied the request for Geolocation.");
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                console.error("Location information is unavailable.");
-                                break;
-                            case error.TIMEOUT:
-                                console.error("The request to get user location timed out.");
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                console.error("An unknown error occurred.");
-                                break;
-                        }
-                    }
-                );
-            } else {
-              console.error("Geolocation is not supported by this browser.");
-            }
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                  function (position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      sendCoordinatesToServer(latitude, longitude);  // Call the function with coordinates
+                      // You can send this information to your server or perform other actions
+                  },
+                  function (error) {
+                      let errorMessage = '';
+                      switch (error.code) {
+                          case error.PERMISSION_DENIED:
+                              errorMessage = "User denied the request for Geolocation.";
+                              break;
+                          case error.POSITION_UNAVAILABLE:
+                              errorMessage = "Location information is unavailable.";
+                              break;
+                          case error.TIMEOUT:
+                              errorMessage = "The request to get user location timed out.";
+                              break;
+                          case error.UNKNOWN_ERROR:
+                              errorMessage = "An unknown error occurred.";
+                              break;
+                      }
+
+                      // Include a button to retry
+                      errorMessage += "\n\nDo you want to retry?";
+                      if (window.confirm(errorMessage)) {
+                          getUserLocation(); // Retry the function
+                      }
+                  }
+              );
+          } else {
+              window.alert("Geolocation is not supported by this browser.");
+          }
         }
+
 
         function sendCoordinatesToServer(latitude, longitude) {
         // Add latitude and longitude as hidden inputs to the form
@@ -380,18 +391,27 @@
     
         function toggleAddressInputSection() {
           const currentLocationRadio = document.getElementById('currentLocation');
+          const inputAddressRadio = document.getElementById('inputAddress')
           const addressInputSection = document.getElementById('addressInputSection');
-    
+          const breakElement = document.getElementById('breakId');
+          const modalMessage1 = document.getElementById('modalMessage1');
+
             if (currentLocationRadio.checked) {
               addressInputSection.style.display = 'none';
+              breakElement.style.display = 'none';
+              modalMessage1.style.display = 'none';
               getUserLocation();
-            } else {
+            } else if (inputAddressRadio.checked) {
               addressInputSection.style.display = 'block';
+              breakElement.style.display = 'block';
+              modalMessage1.style.display = 'none';
+            } else {
+              addressInputSection.style.display = 'none';
+              breakElement.style.display = 'none'
             }
         }
     
         window.onload = function () {
-          getUserLocation();
           toggleAddressInputSection();
         };
     
@@ -399,8 +419,24 @@
           radio.addEventListener('change', toggleAddressInputSection);
         });
       </script>
-    
-      
+
+      <!--script for validating form address-->
+      <script>
+        function validateForm() {
+            const currentLocationRadio = document.getElementById('currentLocation');
+            const inputAddressRadio = document.getElementById('inputAddress');
+
+            if (!currentLocationRadio.checked && !inputAddressRadio.checked) {
+                // Neither radio button is checked
+                const modalMessage1 = document.getElementById('modalMessage1');
+                modalMessage1.textContent = 'Please select either "Use Current Location" or "Input Address".';
+                //alert('Please select either "Use Current Location" or "Input Address" before submitting.');
+                return false; // Prevent form submission
+            }
+            // Form is valid, proceed with submission
+            return true;
+        }
+    </script>
       
     </form>
     

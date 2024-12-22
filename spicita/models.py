@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from uuid import uuid4
+from users.models import Customer
 # Create your models here.
 
 
@@ -111,6 +112,11 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         self.total_price = self.calculate_price()
         super().save(*args, **kwargs)
+    def delete(self, using=None, keep_parents=False):
+        # Delete associated OrderItem objects
+        self.items.all().delete()
+        # Call the delete method of the base class
+        super().delete(using=using, keep_parents=keep_parents)
     def __str__(self) -> str:
         output = f"{self.customer}/{self.ticket}"
         return output
