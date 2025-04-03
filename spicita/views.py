@@ -36,7 +36,7 @@ def buy_food(request, dish_name):
             distance = directions[0]['legs'][0]['distance']['text']
             duration = directions[0]['legs'][0]['duration']['text']"""
             new_order = form.save(commit=False)
-            new_order.customer = customer
+            new_order.customer = customer.user
             if lat and lon:
                 new_order.address = f"{lat} {lon}"
             else:

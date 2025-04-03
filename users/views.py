@@ -16,7 +16,7 @@ def create_customer(request):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             new_user = form.save()
-            Customer.objects.create(user=new_user, address=request.POST["address"])
+            Customer.objects.create(user=new_user)
             login(request, new_user)
             messages.success(
                 request,

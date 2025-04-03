@@ -15,32 +15,36 @@
 
     <div class="album py-5 bg-body-tertiary">
       <div class="container">
+        {%if dishes%}
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-          {% for dish in dishes %}
-            <div class="col">
-              <div class="card shadow-sm">
-                {% if dish.icon %}
-                  <img class="bd-placeholder-img card-img-top" role="img" alt="{{dish.name}}" width="100%" height="225" src="{{ dish.icon.url }}" title="{{dish.name}}">
-                {% else %}
-                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>{{dish.name}}</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">{{dish.name|title}}</text></svg>
-                {% endif %}
-                <div class="card-body">
-                  <p class="card-text"><span>{{ dish.name|title }}</span><br/>{{ dish.description|linebreaks }}</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <a href="{% url 'buyfood' dish.name %}" role="button" type="button" class="btn btn-sm btn-outline-success">Buy</a>
+            {% for dish in dishes %}
+              <div class="col">
+                <div class="card shadow-sm">
+                  {% if dish.icon %}
+                    <img class="bd-placeholder-img card-img-top" role="img" alt="{{dish.name}}" width="100%" height="225" src="{{ dish.icon.url }}" title="{{dish.name}}">
+                  {% else %}
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>{{dish.name}}</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">{{dish.name|title}}</text></svg>
+                  {% endif %}
+                  <div class="card-body">
+                    <p class="card-text"><span>{{ dish.name|title }}</span><br/>{{ dish.description|linebreaks }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                        <a href="{% url 'buyfood' dish.name %}" role="button" type="button" class="btn btn-sm btn-outline-success">Buy</a>
+                      </div>
+                      <small class="text-body-secondary">&#x20A6;{{ dish.price }}</small>
                     </div>
-                    <small class="text-body-secondary">&#x20A6;{{ dish.price }}</small>
                   </div>
                 </div>
               </div>
-            </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-body-secondary text-center">
+            <p>No Dishes Available</p>
+          </div>
 
-        </div>
-
+        {% endif %}
       </div>
     </div>
 
