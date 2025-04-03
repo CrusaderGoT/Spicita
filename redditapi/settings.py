@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # my apps
     'spicita',
     'users',
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [

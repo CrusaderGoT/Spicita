@@ -5,6 +5,6 @@ from users import views
 app_label = "users"
 
 urlpatterns = [
-    path('sign-up', views.create_customer, name='sign-up'),
-    path('login', views.login, name='login'),
+    path('signup', views.create_customer, name='signup'),
+    path('login', views.login_view, name='login'),
 ]
