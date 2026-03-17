@@ -35,7 +35,7 @@ def buy_food(request, dish_name):
             distance = directions[0]['legs'][0]['distance']['text']
             duration = directions[0]['legs'][0]['duration']['text']"""
             new_order = form.save(commit=False)
-            new_order.customer = customer.user
+            new_order.customer = customer
             if lat and lon:
                 new_order.address = f"{lat} {lon}"
             else:
@@ -53,10 +53,10 @@ def buy_food(request, dish_name):
                 and request.POST[f"selectExtra{extra.name}"]
             ]
             # create orderitem and add dish and extras to order
-            order_item1 = OrderItem.objects.create(
+            order_item = OrderItem.objects.create(
                 dish=dish, dish_quantity=request.POST["dishAmt"]
             )
-            new_order.items.add(order_item1)
+            new_order.items.add(order_item)
             for extra in selected_extras:
                 # fetch extra instance
                 extra_inst = Extra.objects.get(name=extra["extra"])
@@ -65,7 +65,7 @@ def buy_food(request, dish_name):
                 )
                 new_order.items.add(extra_item)
             new_order.ordered = True
-            new_order.save()  # save again to cumpute total price
+            new_order.save()  # save again to compute total price
             return redirect("pay", new_order.ticket)
     else:
         form = OrderForm()

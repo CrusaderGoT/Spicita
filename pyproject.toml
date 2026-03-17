@@ -10,3 +10,16 @@ dependencies = [
     "djhtml>=3.0.7",
     "pillow>=11.1.0",
 ]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.0",
+    "mypy>=1.19.1",
+]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+strict = true
+
+[tool.django-stubs]
+django_settings_module = "spicita_project.settings"

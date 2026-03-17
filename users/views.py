@@ -38,7 +38,7 @@ def login_view(request):
             password=request.POST.get("password"),
         )
         if user:
-            login(user)
+            login(request, user)
             messages.success(request, "log in successful")
             return redirect(request.path)
         else:
