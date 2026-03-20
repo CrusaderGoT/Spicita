@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spicita</title>
-    {% load static %} {% load django_bootstrap5 %}
-    {% bootstrap_css %} {% bootstrap_javascript %}
-
-    {% block extratags %} {% endblock extratags %}
+    {% load static %}
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
   </head>
 
   <body class="d-flex flex-column vh-100">
@@ -76,6 +76,7 @@
       </header>
 
       <main class="container p-4">
+        {% bootstrap_messages %}
         {% block content %} {% endblock content %}
       </main>
 
@@ -107,6 +108,9 @@
 
       </footer>
 
-      <script src="{% static '/js/modeToggle.js' %}"></script>
+      {% block scripts %}
+      {% endblock scripts %}
+      
+      <script src="{% static '/js/modeToggle.js' %}" defer></script>
     </body>
   </html>

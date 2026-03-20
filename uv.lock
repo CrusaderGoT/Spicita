@@ -52,6 +52,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/63/a2/b0e8d16fa33e07aa096eacb12d032d4561ce0e7e21248b4d34e943daf8d9/django_stubs-6.0.0-py3-none-any.whl", hash = "sha256:747baa97fb9a5c1892ef93bf881d06b4f211f719da18e4ddfd1e74bbad71e752", size = 535559, upload-time = "2026-03-17T00:25:10.335Z" },
 ]
 
+[package.optional-dependencies]
+compatible-mypy = [
+    { name = "mypy" },
+]
+
 [[package]]
 name = "django-stubs-ext"
 version = "6.0.0"
@@ -267,22 +272,22 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "django-stubs" },
-    { name = "mypy" },
+    { name = "django-stubs", extra = ["compatible-mypy"] },
+    { name = "django-stubs-ext" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=5.2" },
-    { name = "django-bootstrap5", specifier = ">=25.1" },
+    { name = "django-bootstrap5", specifier = ">=26.2" },
     { name = "djhtml", specifier = ">=3.0.7" },
     { name = "pillow", specifier = ">=11.1.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "django-stubs", specifier = ">=6.0.0" },
-    { name = "mypy", specifier = ">=1.19.1" },
+    { name = "django-stubs", extras = ["compatible-mypy"], specifier = ">=6.0.0" },
+    { name = "django-stubs-ext", specifier = ">=6.0.0" },
 ]
 
 [[package]]

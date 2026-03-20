@@ -1,0 +1,196 @@
+{% extends 'spicita/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div>
+  <form
+    action="{% url 'buy_food' dish.pk %}"
+    method="post"
+  >
+    {% csrf_token %}
+
+    <section class="text-center d-flex align-items-center justify-content-center">
+      <div class="card mb-4 rounded-3 shadow-sm">
+        <div class="card-header py-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ dish.description }}">
+          <h4 id="dishName" class="my-0 fw-normal">{{ dish.name|title }}</h4>
+        </div>
+
+        <img
+          class="card-img-top rounded-0"
+          role="img"
+          alt="{{ dish.name }}"
+          width="100%"
+          src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}"
+          title="{{ dish.name }}"
+          onerror="this.onerror=null; this.src='https://placehold.co/600x400';"
+        />
+
+        <div class="card-body">
+          <label for="dishAmtRange" class="form-label fs-5">Amount</label>
+          <input
+            type="range"
+            class="form-range"
+            min="1"
+            max="20"
+            step="1"
+            value="1"
+            id="dishAmtRange"
+            name="dish-amount"
+          />
+          <span id="dishRangeDisplay" class="fs-5">1</span>
+          <sub>x</sub> <sub id="dishAmtPrice">{{ dish.price|floatformat }}</sub>
+        </div>
+
+        <div class="card-footer">
+          <h3 id="dishAmtPriceDisplay">
+            &#x20A6;{{ dish.price }}
+          </h3>
+        </div>
+      </div>
+    </section>
+
+    {% if extras %}
+      <section class="m-3">
+        <div class="p-3 mx-auto text-center">
+          <h1 class="display-5 fw-normal text-body-emphasis">Extras</h1>
+          <p class="fs-5 text-body-secondary">
+            Enhance your {{ dish }} with our Extras, to make for the perfect
+            delicious meal.
+          </p>
+        </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-large-4">
+          {% for extra in extras %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="card rounded-3 shadow-sm text-center mb-4">
+
+                <div class="card-header py-2">
+                  <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">{{ extra.name|title }}</h4>
+                </div>
+
+                <input
+                  type="checkbox"
+                  class="form-check-input visually-hidden"
+                  id="selectExtra-{{ extra.name|slugify }}"
+                  name="select-extra-{{ extra.name|slugify }}"
+                  value="{{ extra.name }}"
+                />
+
+                <label class="form-check-label stretched-link" for="selectExtra-{{ extra.name|slugify }}">
+                  <img
+                    class="card-img-top rounded-0"
+                    alt="{{ extra.name }}"
+                    width="100%"
+                    src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/default-icon.png{% endif %}"
+                    title="{{ extra.name }}"
+                    onerror="this.onerror=null; this.src='https://placehold.co/225';"
+                  />
+                </label>
+
+                <!-- z-index lifts this above the stretched-link overlay -->
+                <div id="extraAmtBody-{{ extra.name|slugify }}" class="card-body z-2 position-relative fs-6">
+                  <label for="extraAmtRange-{{ extra.name|slugify }}" class="form-label">Amount</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="1" max="20" step="1" value="1"
+                    id="extraAmtRange-{{ extra.name|slugify }}"
+                    name="extra-amount-{{ extra.name|slugify }}"
+                  />
+                  <span id="extraRangeDisplay-{{ extra.name|slugify }}">1</span>
+                  <sub>x</sub>
+                  <sub id="extraAmtPrice-{{ extra.name|slugify }}">{{ extra.price|floatformat }}</sub>
+                </div>
+
+                <div class="card-footer d-flex justify-content-center align-items-center position-relative z-2">
+                  <h5 class="card-title" id="extraAmtPriceDisplay-{{ extra.name|slugify }}">
+                    &#x20A6;{{ extra.price|floatformat }}
+                  </h5>
+                </div>
+
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    
+    <button
+      type="button"
+      id="continueToOrder"
+      class="w-100 rounded btn btn-lg btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#confirmOrder"
+    >
+      Continue
+    </button>
+    
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="confirmOrder"
+      data-bs-backdrop="static"
+      tabindex="-1"
+      aria-labelledby="confirmOrderLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="confirmOrderLabel">
+              Confirm Order
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body" id="confirmOrderBody">
+
+            <label for="itemsList" class="form-label">Item(s)</label>
+            <ol class="list-group list-group-numbered fw-bold" id="itemsList"></ol>
+            
+            <label for="noteId" class="form-label">Note(s)</label>
+            <textarea
+              class="form-control"
+              name="note"
+              id="noteId"
+              rows="3"
+              placeholder="allergies, delivery instructions, etc."
+            ></textarea>
+            
+
+            <input type="hidden" name="latitude" id="latitudeInput" />
+            <input
+              type="hidden"
+              name="longitude"
+              id="longitudeInput"
+            />
+
+          </div>
+          
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock content %} {% block scripts %}
+<script src="{% static '/js/buyFood.js' %}" defer></script>
+{% endblock scripts %}

@@ -1,17 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.shortcuts import HttpResponse, redirect, render
+from django.contrib.auth.models import User
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 
 from users.models import Customer
 
 # Create your views here.
 
 
-def create_customer(request):
+def create_customer(request: HttpRequest):
     """to register new costumer"""
     if request.method != "POST":
-        form = UserCreationForm()
+        form: UserCreationForm[User] = UserCreationForm()
     else:
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
@@ -29,7 +31,7 @@ def create_customer(request):
     return render(request, "users/create_costumer.html", context)
 
 
-def login_view(request):
+def login_view(request: HttpRequest):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         user = authenticate(
