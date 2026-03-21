@@ -60,6 +60,12 @@ class Order(models.Model):
         )["total"] or Decimal("0")
         return dishes_total + extras_total
 
+    @property
+    def total_item_count(self) -> int:
+        items_count = self.items.count()
+        extras_count = OrderItemExtra.objects.filter(order_item__order=self).count()
+        return items_count + extras_count
+
     @override
     def save(self, *args, **kwargs) -> None:
         self.total_price = self.calculate_price()
@@ -83,6 +89,15 @@ class OrderItem(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     extras = models.ManyToManyField("spicita.OrderItemExtra")
+
+    @property
+    def total_price(self) -> Decimal:
+        dish_total = self.dish.price * self.quantity
+        extras_total = sum(
+            ie.extra.price * ie.quantity
+            for ie in self.extras.select_related("extra").all()
+        )
+        return dish_total + extras_total
 
     @override
     def __str__(self) -> str:

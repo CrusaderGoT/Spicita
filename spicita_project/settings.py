@@ -14,23 +14,33 @@ import os
 from pathlib import Path
 
 import django_stubs_ext
+import environ
 
 django_stubs_ext.monkeypatch()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialise environment variables
+env = environ.Env(
+    # set default types and values
+    DEBUG=(bool, False)
+)
+# Read the .env file
+# This reads the .env file and sets the variables in os.environ
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-@4x%4ti&=wvr3mav49adi8mmq+*l^ztn*%%@+qa!q)^4zd3zqq"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = env.list('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -131,3 +141,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+PAYSTACK_SECRET = env("PAYSTACK_SECRET")

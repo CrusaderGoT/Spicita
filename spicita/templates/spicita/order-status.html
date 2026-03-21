@@ -1,0 +1,160 @@
+{% extends 'spicita/base.html' %}
+
+{% block content %}
+
+<div>
+  <div class="text-center mb-4">
+    <h2>Order Status</h2>
+    <p class="lead text-body-secondary">
+      Ticket: <code>{{ order.ticket }}</code>
+    </p>
+  </div>
+
+  <div class="row g-5">
+
+    {# ── Order Summary Sidebar ── #}
+    <div class="col-md-5 col-lg-4 order-md-last">
+      <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-primary">Your Order</span>
+        <span class="badge bg-primary rounded-pill">
+          {{ order.total_item_count }} item{{ order.total_item_count|pluralize }}
+        </span>
+      </h4>
+
+      <ul class="list-group mb-3">
+        {% for item in order.items.all %}
+          <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+              <h6 class="my-0">{{ item }}</h6>
+              {% for ie in item.extras.all %}
+                <small class="text-body-secondary">+ {{ ie }}</small><br>
+              {% endfor %}
+            </div>
+            <span class="text-body-secondary">&#x20A6;{{ item.total_price }}</span>
+          </li>
+        {% endfor %}
+
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Total (NGN)</span>
+          <strong>&#x20A6;{{ order.total_price }}</strong>
+        </li>
+
+        {% if order.note %}
+          <li class="list-group-item">
+            <small class="text-body-secondary"><strong>Note:</strong> {{ order.note }}</small>
+          </li>
+        {% endif %}
+
+        <li class="list-group-item">
+          <small class="text-body-secondary"><strong>Address:</strong> {{ order.address }}</small>
+        </li>
+
+        <li class="list-group-item">
+          <small class="text-body-secondary"><strong>Placed:</strong> {{ order.date|date:"N j, Y – H:i" }}</small>
+        </li>
+      </ul>
+    </div>
+
+    {# ── Status Panel ── #}
+    <div class="col-md-7 col-lg-8">
+      <h4 class="mb-4">Tracking</h4>
+
+      {# Overall status badge #}
+      <div class="mb-4">
+        {% if order.delivered %}
+          <span class="badge bg-success fs-6">Delivered</span>
+        {% elif order.ordered %}
+          <span class="badge bg-warning text-dark fs-6">Being Prepared</span>
+        {% else %}
+          <span class="badge bg-secondary fs-6">Awaiting Payment</span>
+        {% endif %}
+      </div>
+
+      {# Progress stepper #}
+      <ul class="list-group list-group-flush mb-4">
+
+        {# Step 1 — Order Placed #}
+        <li class="list-group-item d-flex align-items-center gap-3 py-3">
+          <span class="badge rounded-circle p-2
+            {% if order.ordered or order.delivered %}bg-success{% else %}bg-secondary{% endif %}"
+            style="width:2rem;height:2rem;line-height:1rem;">
+            {% if order.ordered or order.delivered %}✓{% else %}1{% endif %}
+          </span>
+          <div>
+            <strong>Order Placed</strong>
+            <div class="text-body-secondary small">
+              {% if order.ordered %}
+                Payment confirmed on {{ order.date|date:"N j, Y" }}.
+              {% else %}
+                Complete payment to confirm your order.
+              {% endif %}
+            </div>
+          </div>
+        </li>
+
+        {# Step 2 — Being Prepared #}
+        <li class="list-group-item d-flex align-items-center gap-3 py-3">
+          <span class="badge rounded-circle p-2
+            {% if order.ordered and not order.delivered %}bg-warning text-dark
+            {% elif order.delivered %}bg-success
+            {% else %}bg-secondary{% endif %}"
+            style="width:2rem;height:2rem;line-height:1rem;">
+            {% if order.delivered %}✓{% else %}2{% endif %}
+          </span>
+          <div>
+            <strong>Being Prepared</strong>
+            <div class="text-body-secondary small">
+              {% if order.delivered %}
+                Your order was prepared and dispatched.
+              {% elif order.ordered %}
+                The kitchen is working on your order.
+              {% else %}
+                Waiting for payment confirmation.
+              {% endif %}
+            </div>
+          </div>
+        </li>
+
+        {# Step 3 — Delivered #}
+        <li class="list-group-item d-flex align-items-center gap-3 py-3">
+          <span class="badge rounded-circle p-2
+            {% if order.delivered %}bg-success{% else %}bg-secondary{% endif %}"
+            style="width:2rem;height:2rem;line-height:1rem;">
+            {% if order.delivered %}✓{% else %}3{% endif %}
+          </span>
+          <div>
+            <strong>Delivered</strong>
+            <div class="text-body-secondary small">
+              {% if order.delivered %}
+                Your order has been delivered. Enjoy your meal!
+              {% else %}
+                Your order will be delivered to: <em>{{ order.address }}</em>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <hr class="my-4" />
+
+      {# CTA — only show Pay button if not yet ordered #}
+      {% if not order.ordered %}
+        <a href="{% url 'pay' order.ticket %}" class="w-100 btn btn-primary btn-lg">
+          Complete Payment &rarr;
+        </a>
+      {% elif order.delivered %}
+        <div class="alert alert-success text-center">
+          🎉 Your order has been delivered. Thank you for dining with us!
+        </div>
+      {% else %}
+        <div class="alert alert-warning text-center">
+          ⏳ Your order is being prepared. We'll deliver it to you shortly.
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
