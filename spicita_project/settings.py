@@ -47,7 +47,10 @@ SECRET_KEY = env.str(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS")
+# env.list has a stub that types its default parameter as a special NoValue;
+# static type checkers (mypy/pyright) may complain when passing a list literal here,
+# so we silence the argument-type check while preserving runtime behavior.
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])  # type: ignore[arg-type]
 
 
 # Application definition
