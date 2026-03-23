@@ -3,3 +3,5 @@ __pycache__/
 static/examples
 .env*
 db.sqlite3
+static/food_icons/**
+static/extra_icons/** 
