@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.models import User
-from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpRequest
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
+from users.forms import CustomUserCreationForm
 from users.models import Customer
 
 # Create your views here.
@@ -12,10 +13,8 @@ from users.models import Customer
 
 def create_customer(request: HttpRequest):
     """to register new costumer"""
-    if request.method != "POST":
-        form: UserCreationForm[User] = UserCreationForm()
-    else:
-        form = UserCreationForm(data=request.POST)
+    if request.method == "POST":
+        form = CustomUserCreationForm(data=request.POST)
         if form.is_valid():
             new_user = form.save()
             Customer.objects.create(user=new_user)
@@ -24,16 +23,20 @@ def create_customer(request: HttpRequest):
                 request,
                 f"successfully registered as {request.POST['username']}, Welcome!",
             )
-            return redirect(request.path)
-        else:
-            HttpResponse("invalid")
+            return redirect(reverse("home"))
+    else:
+        form: CustomUserCreationForm = CustomUserCreationForm()
     context = {"form": form}
     return render(request, "users/create_costumer.html", context)
 
 
 def login_view(request: HttpRequest):
+    form = AuthenticationForm()
+    context = {"form": form}
+
     if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
+        form.data = request.POST
+
         user = authenticate(
             request,
             username=request.POST.get("username"),
@@ -42,11 +45,9 @@ def login_view(request: HttpRequest):
         if user:
             login(request, user)
             messages.success(request, "log in successful")
-            return redirect(request.path)
+            return redirect(reverse("home"))
         else:
             messages.error(request, "username and password do not match.")
-            return redirect("login")
-    else:
-        form = AuthenticationForm()
-    context = {"form": form}
+            return render(request, "users/login.html", context)
+
     return render(request, "users/login.html", context)
