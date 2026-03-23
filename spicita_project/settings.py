@@ -47,10 +47,10 @@ SECRET_KEY = env.str(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
 
-# env.list has a stub that types its default parameter as a special NoValue;
-# static type checkers (mypy/pyright) may complain when passing a list literal here,
-# so we silence the argument-type check while preserving runtime behavior.
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])  # type: ignore[arg-type]
+
+ALLOWED_HOSTS: list[str] = ["crusaderGoT.pythonanywhere.com", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = ['https://crusaderGoT.pythonanywhere.com']
 
 
 # Application definition
