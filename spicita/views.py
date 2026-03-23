@@ -109,10 +109,11 @@ def init_pay(request: HttpRequest, order_ticket: str):
     amount = order.total_price * 100  # to convert to kobo
 
     payload = {
+        "email": "enememeka44@gmail.com",
         "amount": amount,
-        "currency": "ngn",
         "reference": str(order.ticket),
         "callback_url": request.build_absolute_uri(f"/verify/{order.ticket}"),
+        "channels": ["card", "bank", "ussd", "bank_transfer"],
         "metadata": {
             "order_id": str(order.ticket),
             "custom_fields": [
@@ -140,7 +141,6 @@ def init_pay(request: HttpRequest, order_ticket: str):
         paystack_url,
         json=payload,
         headers=PAYSTACK_HEADER,
-        timeout=10,
     )
 
     data = res.json()
@@ -163,7 +163,7 @@ def verify_payment(request: HttpRequest, order_ticket: str):
 
     order_status_url = request.build_absolute_uri(f"/status/{reference}")
 
-    res = requests.post(url, headers=PAYSTACK_HEADER)
+    res = requests.get(url, headers=PAYSTACK_HEADER)
 
     data = res.json()
 
@@ -216,11 +216,13 @@ def paystack_webhook(request):
 
     return HttpResponse(status=200)
 
+
 @login_required(login_url="login", redirect_field_name="next")
 def order_status(request: HttpRequest, order_ticket: str):
     order = get_object_or_404(Order, ticket=order_ticket, customer__user=request.user)
 
     return render(request, "spicita/order-status.html", {"order": order})
+
 
 def order_food(request: HttpRequest):
     """view for buying multiple dishes"""

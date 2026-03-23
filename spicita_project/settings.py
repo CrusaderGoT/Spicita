@@ -40,7 +40,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS: list[str] = env.list('ALLOWED_HOSTS')
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -142,4 +142,4 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-PAYSTACK_SECRET = env("PAYSTACK_SECRET")
+PAYSTACK_SECRET = env.str("PAYSTACK_SECRET")

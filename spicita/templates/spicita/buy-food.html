@@ -1,19 +1,19 @@
-{% extends 'spicita/base.html' %}
-
-{% load static %}
-
-{% block content %}
+{% extends 'spicita/base.html' %} {% load static %} {% block content %}
 
 <div>
-  <form
-    action="{% url 'buy_food' dish.pk %}"
-    method="post"
-  >
+  <form action="{% url 'buy_food' dish.pk %}" method="post">
     {% csrf_token %}
 
-    <section class="text-center d-flex align-items-center justify-content-center">
+    <section
+      class="text-center d-flex align-items-center justify-content-center"
+    >
       <div class="card mb-4 rounded-3 shadow-sm">
-        <div class="card-header py-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ dish.description }}">
+        <div
+          class="card-header py-3"
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          data-bs-title="{{ dish.description }}"
+        >
           <h4 id="dishName" class="my-0 fw-normal">{{ dish.name|title }}</h4>
         </div>
 
@@ -44,79 +44,96 @@
         </div>
 
         <div class="card-footer">
-          <h3 id="dishAmtPriceDisplay">
-            &#x20A6;{{ dish.price }}
-          </h3>
+          <h3 id="dishAmtPriceDisplay">&#x20A6;{{ dish.price }}</h3>
         </div>
       </div>
     </section>
 
     {% if extras %}
-      <section class="m-3">
-        <div class="p-3 mx-auto text-center">
-          <h1 class="display-5 fw-normal text-body-emphasis">Extras</h1>
-          <p class="fs-5 text-body-secondary">
-            Enhance your {{ dish }} with our Extras, to make for the perfect
-            delicious meal.
-          </p>
-        </div>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-large-4">
-          {% for extra in extras %}
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-              <div class="card rounded-3 shadow-sm text-center mb-4">
-
-                <div class="card-header py-2">
-                  <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">{{ extra.name|title }}</h4>
-                </div>
-
-                <input
-                  type="checkbox"
-                  class="form-check-input visually-hidden"
-                  id="selectExtra-{{ extra.name|slugify }}"
-                  name="select-extra-{{ extra.name|slugify }}"
-                  value="{{ extra.name }}"
-                />
-
-                <label class="form-check-label stretched-link" for="selectExtra-{{ extra.name|slugify }}">
-                  <img
-                    class="card-img-top rounded-0"
-                    alt="{{ extra.name }}"
-                    width="100%"
-                    src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/default-icon.png{% endif %}"
-                    title="{{ extra.name }}"
-                    onerror="this.onerror=null; this.src='https://placehold.co/225';"
-                  />
-                </label>
-
-                <!-- z-index lifts this above the stretched-link overlay -->
-                <div id="extraAmtBody-{{ extra.name|slugify }}" class="card-body z-2 position-relative fs-6">
-                  <label for="extraAmtRange-{{ extra.name|slugify }}" class="form-label">Amount</label>
-                  <input
-                    type="range"
-                    class="form-range"
-                    min="1" max="20" step="1" value="1"
-                    id="extraAmtRange-{{ extra.name|slugify }}"
-                    name="extra-amount-{{ extra.name|slugify }}"
-                  />
-                  <span id="extraRangeDisplay-{{ extra.name|slugify }}">1</span>
-                  <sub>x</sub>
-                  <sub id="extraAmtPrice-{{ extra.name|slugify }}">{{ extra.price|floatformat }}</sub>
-                </div>
-
-                <div class="card-footer d-flex justify-content-center align-items-center position-relative z-2">
-                  <h5 class="card-title" id="extraAmtPriceDisplay-{{ extra.name|slugify }}">
-                    &#x20A6;{{ extra.price|floatformat }}
-                  </h5>
-                </div>
-
-              </div>
+    <section class="m-3">
+      <div class="p-3 mx-auto text-center">
+        <h1 class="display-5 fw-normal text-body-emphasis">Extras</h1>
+        <p class="fs-5 text-body-secondary">
+          Enhance your {{ dish }} with our Extras, to make for the perfect
+          delicious meal.
+        </p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-large-4">
+        {% for extra in extras %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="card rounded-3 shadow-sm text-center mb-4">
+            <div class="card-header py-2">
+              <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">
+                {{ extra.name|title }}
+              </h4>
             </div>
-          {% endfor %}
+
+            <input
+              type="checkbox"
+              class="form-check-input visually-hidden"
+              id="selectExtra-{{ extra.name|slugify }}"
+              name="select-extra-{{ extra.name|slugify }}"
+              value="{{ extra.name }}"
+            />
+
+            <label
+              class="form-check-label stretched-link"
+              for="selectExtra-{{ extra.name|slugify }}"
+            >
+              <img
+                class="card-img-top rounded-0"
+                alt="{{ extra.name }}"
+                width="100%"
+                src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/default-icon.png{% endif %}"
+                title="{{ extra.name }}"
+                onerror="this.onerror=null; this.src='https://placehold.co/225';"
+              />
+            </label>
+
+            <!-- z-index lifts this above the stretched-link overlay -->
+            <div
+              id="extraAmtBody-{{ extra.name|slugify }}"
+              class="card-body z-2 position-relative fs-6"
+            >
+              <label
+                for="extraAmtRange-{{ extra.name|slugify }}"
+                class="form-label"
+                >Amount</label
+              >
+              <input
+                type="range"
+                class="form-range"
+                min="1"
+                max="20"
+                step="1"
+                value="1"
+                id="extraAmtRange-{{ extra.name|slugify }}"
+                name="extra-amount-{{ extra.name|slugify }}"
+              />
+              <span id="extraRangeDisplay-{{ extra.name|slugify }}">1</span>
+              <sub>x</sub>
+              <sub id="extraAmtPrice-{{ extra.name|slugify }}"
+                >{{ extra.price|floatformat }}</sub
+              >
+            </div>
+
+            <div
+              class="card-footer d-flex justify-content-center align-items-center position-relative z-2"
+            >
+              <h5
+                class="card-title"
+                id="extraAmtPriceDisplay-{{ extra.name|slugify }}"
+              >
+                &#x20A6;{{ extra.price|floatformat }}
+              </h5>
+            </div>
+          </div>
         </div>
-      </section>
+        {% endfor %}
+      </div>
+    </section>
     {% endif %}
 
-    
     <button
       type="button"
       id="continueToOrder"
@@ -126,67 +143,81 @@
     >
       Continue
     </button>
-    
 
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check-circle-fill" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+      </symbol>
+      <symbol id="info-fill" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+      </symbol>
+      <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </symbol>
+    </svg>
+    
     <!-- Modal -->
     <div
-      class="modal fade"
-      id="confirmOrder"
-      data-bs-backdrop="static"
-      tabindex="-1"
-      aria-labelledby="confirmOrderLabel"
-      aria-hidden="true"
+    class="modal fade"
+    id="confirmOrder"
+    data-bs-backdrop="static"
+    tabindex="-1"
+    aria-labelledby="confirmOrderLabel"
+    aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="confirmOrderLabel">
-              Confirm Order
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
 
-          <div class="modal-body" id="confirmOrderBody">
-
-            <label for="itemsList" class="form-label">Item(s)</label>
-            <ol class="list-group list-group-numbered fw-bold" id="itemsList"></ol>
-            
-            <label for="noteId" class="form-label">Note(s)</label>
-            <textarea
-              class="form-control"
-              name="note"
-              id="noteId"
-              rows="3"
-              placeholder="allergies, delivery instructions, etc."
-            ></textarea>
-            
-
-            <input type="hidden" name="latitude" id="latitudeInput" />
-            <input
-              type="hidden"
-              name="longitude"
-              id="longitudeInput"
-            />
-
-          </div>
-          
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="submit" class="btn btn-primary">Confirm</button>
-          </div>
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="confirmOrderLabel">Confirm Order</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
+
+        <!-- Offline alert sits naturally between header and body -->
+        <div
+          id="onlineStatus"
+          class="alert alert-danger d-none d-flex align-items-center gap-2 rounded-0 mb-0 border-0 border-bottom"
+          role="alert"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wifi-off flex-shrink-0" viewBox="0 0 16 16">
+            <path d="M10.706 3.294A12.545 12.545 0 0 0 8 3C5.259 3 2.723 3.994.664 5.686a.402.402 0 0 0-.036.563l.888.888a.266.266 0 0 0 .373.006A11.54 11.54 0 0 1 8 4c.59 0 1.167.048 1.728.135l1.274-1.274a.5.5 0 0 0-.296-.567zM8 6c-.764 0-1.5.106-2.197.3L8 8.497 8.197 8.3A5.5 5.5 0 0 0 8 6zm7.166 1.028A12.52 12.52 0 0 0 9.544 5.7l-1.43 1.43A5.527 5.527 0 0 1 11.5 9a.5.5 0 0 0 .5.5h.5a.5.5 0 0 0 0-1 4.5 4.5 0 0 0-3.2-4.313l1.518-1.518A11.543 11.543 0 0 1 15.3 6.3a.402.402 0 0 0 .573-.036l.888-.888a.402.402 0 0 0-.595-.348zM13.646 14.354l-12-12-.707.707 2.588 2.588A12.52 12.52 0 0 0 .636 8.333l.888.888a.266.266 0 0 0 .373.006A11.51 11.51 0 0 1 5.5 7.73l1.323 1.323A5.5 5.5 0 0 0 4 13.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5 4.49 4.49 0 0 0-.677-2.377l2.616 2.616.707-.707zM8 14a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+          </svg>
+          <span id="onlineStatusText">You are offline — please check your connection.</span>
+        </div>
+
+        <div class="modal-body" id="confirmOrderBody">
+          <label for="itemsList" class="form-label">Item(s)</label>
+          <ol class="list-group list-group-numbered fw-bold" id="itemsList"></ol>
+
+          <label for="noteId" class="form-label mt-3">Note(s)</label>
+          <textarea
+            class="form-control"
+            name="note"
+            id="noteId"
+            rows="3"
+            placeholder="allergies, delivery instructions, etc."
+          ></textarea>
+
+          <input type="hidden" name="latitude" id="latitudeInput" />
+          <input type="hidden" name="longitude" id="longitudeInput" />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary" id="continueOrderBtn">
+            Confirm
+          </button>
+        </div>
+
       </div>
+    </div>
     </div>
   </form>
 </div>

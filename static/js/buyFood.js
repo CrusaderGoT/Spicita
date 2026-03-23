@@ -155,8 +155,6 @@ function setPositionToForm(position) {
 
   latitudeInput.value = latitude;
   longitudeInput.value = longitude;
-
-  form.submit();
 }
 
 function showError(error) {
@@ -180,4 +178,32 @@ form.addEventListener("submit", function (event) {
   event.preventDefault(); // Stop the submission
 
   getLocation();
+
+  form.submit();
 });
+
+// disable state management for offline
+const btn = document.getElementById("continueOrderBtn");
+const statusBanner = document.getElementById("onlineStatus");
+
+function updateOnlineStatus() {
+  const isOnline = navigator.onLine;
+
+  // Toggle button
+  if (btn) {
+    btn.disabled = !isOnline;
+    btn.setAttribute("aria-disabled", String(!isOnline));
+  }
+
+  // Toggle alert banner — use Bootstrap's d-none, not style.display
+  if (statusBanner) {
+    statusBanner.classList.toggle("d-none", isOnline);
+    statusBanner.classList.toggle("d-flex", !isOnline);
+  }
+}
+
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+
+// Run immediately so initial state is correct on page load
+updateOnlineStatus();
