@@ -44,7 +44,13 @@ def buy_food(request: HttpRequest, dish_pk: int):
         formData: QueryDict = request.POST
         lat = formData.get("latitude", "lat")
         long = formData.get("longitude", "long")
-        address = "+".join([lat, long])
+        address = (
+            "+".join([lat, long])
+            if lat and long
+            else customer.address
+            if customer.address.strip()
+            else "No Address"
+        )
         note = formData.get("note")
 
         # create order with an initial total_price so DB constraints are satisfied

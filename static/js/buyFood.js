@@ -155,6 +155,8 @@ function setPositionToForm(position) {
 
   latitudeInput.value = latitude;
   longitudeInput.value = longitude;
+
+  form.submit();
 }
 
 function showError(error) {
@@ -178,8 +180,6 @@ form.addEventListener("submit", function (event) {
   event.preventDefault(); // Stop the submission
 
   getLocation();
-
-  form.submit();
 });
 
 // disable state management for offline
