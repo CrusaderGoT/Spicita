@@ -13,10 +13,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
-import django_stubs_ext
 import environ
 
-django_stubs_ext.monkeypatch()
+try:
+    import django_stubs_ext  # a dev dependency
+
+    django_stubs_ext.monkeypatch()
+except ImportError:
+    pass  # Not available in production — that's fine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,7 +39,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY") or "django-insecure-@4x%4ti&=wvr3mav49adi8mmq+*l^ztn*%%@+qa!q)^4zd3zqq"
+SECRET_KEY = (
+    env("SECRET_KEY")
+    or "django-insecure-@4x%4ti&=wvr3mav49adi8mmq+*l^ztn*%%@+qa!q)^4zd3zqq"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG")
