@@ -11,7 +11,7 @@ from spicita.models import Dish, Extra, Order
 
 
 # For Dish Model
-class AdminDish(admin.ModelAdmin[Dish]):
+class AdminDish(admin.ModelAdmin):
     model = Dish
     list_display = ["price", "added_on"]
 
@@ -36,7 +36,7 @@ admin.site.register(Dish, AdminDish)
 
 
 # customize order in admin
-class AdminOrder(admin.ModelAdmin[Order]):
+class AdminOrder(admin.ModelAdmin):
     model = Order
     list_display = ["ticket", "total_price", "date"]
 
