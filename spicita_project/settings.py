@@ -38,7 +38,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS")
 
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -143,3 +144,20 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 PAYSTACK_SECRET = env.str("PAYSTACK_SECRET")
+
+# PRODUCTION SETTINGS
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
+
+# Static file serving.
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
