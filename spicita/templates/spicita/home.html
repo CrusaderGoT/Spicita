@@ -6,9 +6,9 @@
       <div class="mx-auto">
         <h1 class="fw-light">SPICITA FOODS</h1>
         <p class="lead text-body-secondary">Welcome to Spicita, the home of delicious dishes and snacks.<br/> We offer home deliveries, and excellent customer care, all at affordable prices.</p>
-        <div>
+        {% if not user.is_authenticated %}
           <a href="{% url 'signup' %}" class="btn btn-sm btn-secondary">Sign up or Sign in</a>
-        </div>
+        {% endif %}
       </div>
     </section>
 
