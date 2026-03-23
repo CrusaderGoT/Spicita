@@ -153,7 +153,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-PAYSTACK_SECRET = env.str("PAYSTACK_SECRET")
+PAYSTACK_SECRET = env.str("PAYSTACK_SECRET", default="")
 
 # PRODUCTION SETTINGS
 SECURE_SSL_REDIRECT = not DEBUG
