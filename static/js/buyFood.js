@@ -195,7 +195,7 @@ function updateOnlineStatus() {
     btn.setAttribute("aria-disabled", String(!isOnline));
   }
 
-  // Toggle alert banner — use Bootstrap's d-none, not style.display
+  // Toggle alert banner
   if (statusBanner) {
     statusBanner.classList.toggle("d-none", isOnline);
     statusBanner.classList.toggle("d-flex", !isOnline);

@@ -13,5 +13,4 @@ urlpatterns = [
     path("verify/<str:order_ticket>/", views.verify_payment, name="verify_pay"),
     path("status/<str:order_ticket>/", views.order_status, name="order_status"),
     path("webhook/paystack/", views.paystack_webhook, name="pay_webhook"),
-    path("order/", views.order_food, name="orderfood"),
 ]

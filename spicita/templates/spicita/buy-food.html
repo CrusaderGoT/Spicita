@@ -145,12 +145,6 @@
     </button>
 
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-      <symbol id="check-circle-fill" viewBox="0 0 16 16">
-        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-      </symbol>
-      <symbol id="info-fill" viewBox="0 0 16 16">
-        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-      </symbol>
       <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
       </symbol>
@@ -178,18 +172,6 @@
           ></button>
         </div>
 
-        <!-- Offline alert sits naturally between header and body -->
-        <div
-          id="onlineStatus"
-          class="alert alert-danger d-none d-flex align-items-center gap-2 rounded-0 mb-0 border-0 border-bottom"
-          role="alert"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wifi-off flex-shrink-0" viewBox="0 0 16 16">
-            <path d="M10.706 3.294A12.545 12.545 0 0 0 8 3C5.259 3 2.723 3.994.664 5.686a.402.402 0 0 0-.036.563l.888.888a.266.266 0 0 0 .373.006A11.54 11.54 0 0 1 8 4c.59 0 1.167.048 1.728.135l1.274-1.274a.5.5 0 0 0-.296-.567zM8 6c-.764 0-1.5.106-2.197.3L8 8.497 8.197 8.3A5.5 5.5 0 0 0 8 6zm7.166 1.028A12.52 12.52 0 0 0 9.544 5.7l-1.43 1.43A5.527 5.527 0 0 1 11.5 9a.5.5 0 0 0 .5.5h.5a.5.5 0 0 0 0-1 4.5 4.5 0 0 0-3.2-4.313l1.518-1.518A11.543 11.543 0 0 1 15.3 6.3a.402.402 0 0 0 .573-.036l.888-.888a.402.402 0 0 0-.595-.348zM13.646 14.354l-12-12-.707.707 2.588 2.588A12.52 12.52 0 0 0 .636 8.333l.888.888a.266.266 0 0 0 .373.006A11.51 11.51 0 0 1 5.5 7.73l1.323 1.323A5.5 5.5 0 0 0 4 13.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5 4.49 4.49 0 0 0-.677-2.377l2.616 2.616.707-.707zM8 14a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
-          </svg>
-          <span id="onlineStatusText">You are offline — please check your connection.</span>
-        </div>
-
         <div class="modal-body" id="confirmOrderBody">
           <label for="itemsList" class="form-label">Item(s)</label>
           <ol class="list-group list-group-numbered fw-bold" id="itemsList"></ol>
@@ -205,6 +187,13 @@
 
           <input type="hidden" name="latitude" id="latitudeInput" />
           <input type="hidden" name="longitude" id="longitudeInput" />
+
+          <div id="onlineStatus" class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+            <svg class="bi flex-shrink-0 me-2" height="18" width="18" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+            <div>
+              You are offline — please check your connection.
+            </div>
+          </div> 
         </div>
 
         <div class="modal-footer">

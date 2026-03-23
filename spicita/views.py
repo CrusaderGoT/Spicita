@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from spicita.forms import OrderForm
 from spicita.models import Dish, Extra, Order, OrderItem, OrderItemExtra
 from users.models import Customer
 
@@ -222,14 +221,3 @@ def order_status(request: HttpRequest, order_ticket: str):
     order = get_object_or_404(Order, ticket=order_ticket, customer__user=request.user)
 
     return render(request, "spicita/order-status.html", {"order": order})
-
-
-def order_food(request: HttpRequest):
-    """view for buying multiple dishes"""
-    dishes = Dish.objects.all()
-    if request.method == "POST":
-        form = OrderForm(data=request.POST)
-    else:
-        form = OrderForm()
-    context = {"form": form, "dishes": dishes}
-    return render(request, "spicita/orderfood.html", context)
