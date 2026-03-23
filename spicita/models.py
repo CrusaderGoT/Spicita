@@ -12,7 +12,7 @@ from users.models import Customer
 
 class Dish(models.Model):
     name = models.CharField(max_length=150, unique=True)
-    extras = models.ManyToManyField("spicita.Extra")
+    extras = models.ManyToManyField("spicita.Extra", blank=True)
     added_on = models.DateTimeField(auto_now_add=True)
     icon = models.ImageField(null=True, blank=True, upload_to="static/food_icons")
     price = models.DecimalField(decimal_places=2, max_digits=10, editable=True)
