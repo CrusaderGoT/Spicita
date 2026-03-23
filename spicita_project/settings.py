@@ -48,9 +48,9 @@ SECRET_KEY = env.str(
 DEBUG = env.bool("DEBUG")
 
 
-ALLOWED_HOSTS: list[str] = ["crusaderGoT.pythonanywhere.com", "127.0.0.1"]
+ALLOWED_HOSTS: list[str] = ["crusadergot.pythonanywhere.com", "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ['https://crusaderGoT.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ["https://crusadergot.pythonanywhere.com"]
 
 
 # Application definition
