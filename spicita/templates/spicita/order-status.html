@@ -1,5 +1,7 @@
 {% extends 'spicita/base.html' %}
 
+{% load humanize %}
+
 {% block content %}
 
 <div>
@@ -30,13 +32,13 @@
                 <small class="text-body-secondary">+ {{ ie }}</small><br>
               {% endfor %}
             </div>
-            <span class="text-body-secondary">&#x20A6;{{ item.total_price }}</span>
+            <span class="text-body-secondary">&#x20A6;{{ item.total_price | intcomma }}</span>
           </li>
         {% endfor %}
 
         <li class="list-group-item d-flex justify-content-between">
           <span>Total (NGN)</span>
-          <strong>&#x20A6;{{ order.total_price }}</strong>
+          <strong>&#x20A6;{{ order.total_price | intcomma }}</strong>
         </li>
 
         {% if order.note %}
