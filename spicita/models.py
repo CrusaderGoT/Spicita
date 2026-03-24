@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 from decimal import Decimal
-from typing import override
+from typing import TYPE_CHECKING, override
 from uuid import uuid4
 
 from django.db import models
 from django.db.models import DecimalField, F, Sum
 
 from users.models import Customer
+
+if TYPE_CHECKING:
+    from django.db.models import Manager
 
 # Create your models here.
 
@@ -38,7 +43,9 @@ class Extra(models.Model):
 
 
 class Order(models.Model):
-    items = models.ManyToManyField("spicita.OrderItem", related_name="order_items")
+    # Reverse relation declared for Pylance — populated by OrderItem's FK related_name
+    if TYPE_CHECKING:
+        items: Manager[OrderItem]
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     address = models.TextField(max_length=300, blank=False)
     note = models.TextField(max_length=300, blank=True)
@@ -48,22 +55,38 @@ class Order(models.Model):
     ticket = models.UUIDField(
         primary_key=True, default=uuid4, editable=False, unique=True
     )
-    total_price = models.PositiveIntegerField()
+    total_price = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0")
+    )
 
     def calculate_price(self) -> Decimal:
         """for calculating to price before save"""
         dishes_total = self.items.aggregate(
             total=Sum(F("dish__price") * F("quantity"), output_field=DecimalField())
         )["total"] or Decimal("0")
+
         extras_total = OrderItemExtra.objects.filter(order_item__order=self).aggregate(
-            total=Sum(F("extra__price") * F("quantity"), output_field=DecimalField())
+            total=Sum(
+                F("extra__price") * F("quantity") * F("order_item__quantity"),
+                output_field=DecimalField(),
+            )
         )["total"] or Decimal("0")
+
         return dishes_total + extras_total
 
     @property
     def total_item_count(self) -> int:
-        items_count = self.items.count()
-        extras_count = OrderItemExtra.objects.filter(order_item__order=self).count()
+        from django.db.models import Sum
+
+        items_count = self.items.aggregate(total=Sum("quantity"))["total"] or 0
+
+        extras_count = (
+            OrderItemExtra.objects.filter(order_item__order=self).aggregate(
+                total=Sum("quantity")
+            )["total"]
+            or 0
+        )
+
         return items_count + extras_count
 
     @override
@@ -85,16 +108,19 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey("spicita.Order", on_delete=models.CASCADE)
+    if TYPE_CHECKING:
+        extras: Manager[OrderItemExtra]
+    order = models.ForeignKey(
+        "spicita.Order", on_delete=models.CASCADE, related_name="items"
+    )
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    extras = models.ManyToManyField("spicita.OrderItemExtra")
 
     @property
     def total_price(self) -> Decimal:
         dish_total = self.dish.price * self.quantity
         extras_total = sum(
-            ie.extra.price * ie.quantity
+            ie.extra.price * ie.quantity * self.quantity
             for ie in self.extras.select_related("extra").all()
         )
         return dish_total + extras_total
@@ -105,7 +131,9 @@ class OrderItem(models.Model):
 
 
 class OrderItemExtra(models.Model):
-    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    order_item = models.ForeignKey(
+        OrderItem, on_delete=models.CASCADE, related_name="extras"
+    )
     extra = models.ForeignKey(Extra, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
