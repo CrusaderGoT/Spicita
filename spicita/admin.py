@@ -48,7 +48,7 @@ class AdminOrder(admin.ModelAdmin):
     model = Order
     list_display = ["ticket", "customer", "total_price", "ordered", "delivered", "date"]
     list_filter = ["ordered", "delivered", "date"]
-    search_fields = ["ticket", "customer__name"]
+    search_fields = ["ticket", "customer__user__username"]
     readonly_fields = ["total_price", "ticket", "date"]
 
     def save_model(
