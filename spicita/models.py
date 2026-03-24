@@ -67,7 +67,7 @@ class Order(models.Model):
 
         extras_total = OrderItemExtra.objects.filter(order_item__order=self).aggregate(
             total=Sum(
-                F("extra__price") * F("quantity") * F("order_item__quantity"),
+                F("extra__price") * F("quantity"),
                 output_field=DecimalField(),
             )
         )["total"] or Decimal("0")
@@ -96,9 +96,9 @@ class Order(models.Model):
 
     @override
     def delete(self, using=None, keep_parents=False):
-        # Delete associated OrderItem objects
+        order_item_ids = list(self.items.values_list("id", flat=True))
+        OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
         self.items.all().delete()
-        # Call the delete method of the base class
         return super().delete(using=using, keep_parents=keep_parents)
 
     @override
@@ -120,7 +120,7 @@ class OrderItem(models.Model):
     def total_price(self) -> Decimal:
         dish_total = self.dish.price * self.quantity
         extras_total = sum(
-            ie.extra.price * ie.quantity * self.quantity
+            ie.extra.price * ie.quantity
             for ie in self.extras.select_related("extra").all()
         )
         return dish_total + extras_total
