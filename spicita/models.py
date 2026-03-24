@@ -94,6 +94,13 @@ class Order(models.Model):
         self.total_price = self.calculate_price()
         super().save(*args, **kwargs)
 
+     @override
+     def delete(self, using=None, keep_parents=False):
+    order_item_ids = list(self.items.values_list("id", flat=True))
+    OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
+    self.items.all().delete()
+    return super().delete(using=using, keep_parents=keep_parents)
+
 
     @override
     def __str__(self) -> str:
