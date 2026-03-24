@@ -69,7 +69,7 @@
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-large-4">
         {% for extra in extras %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="card rounded-3 shadow-sm text-center mb-4">
+          <div class="card rounded-3 shadow-sm text-center mb-4 h-100 d-flex flex-column">
             <div class="card-header py-2">
               <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">
                 {{ extra.name|title }}
@@ -101,7 +101,7 @@
             <!-- z-index lifts this above the stretched-link overlay -->
             <div
               id="extraAmtBody-{{ extra.name|slugify }}"
-              class="card-body z-2 position-relative fs-6"
+              class="card-body z-2 position-relative fs-6 flex-grow-1"
             >
               <label
                 for="extraAmtRange-{{ extra.name|slugify }}"
@@ -126,7 +126,7 @@
             </div>
 
             <div
-              class="card-footer d-flex justify-content-center align-items-center position-relative z-2 flex-1"
+              class="card-footer d-flex justify-content-center align-items-center position-relative z-2 mt-auto"
             >
               <h5
                 class="card-title"
