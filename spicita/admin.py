@@ -58,6 +58,15 @@ class AdminOrder(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+    def delete_queryset(self, request: HttpRequest, queryset: QuerySet[Order]) -> None:
+    order_item_ids = list(
+        OrderItem.objects.filter(order__in=queryset).values_list("id", flat=True)
+    )
+    OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
+    OrderItem.objects.filter(id__in=order_item_ids).delete()
+    super().delete_queryset(request, queryset)
+
+
 admin.site.register(Dish, AdminDish)
 admin.site.register(Extra, AdminExtra)
 admin.site.register(Order, AdminOrder)
