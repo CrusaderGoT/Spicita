@@ -70,7 +70,7 @@
         {% for extra in extras %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
   <div class="card rounded-3 shadow-sm text-center mb-4 h-100 d-flex flex-column">
-    
+
     <div class="card-header py-2">
       <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">
         {{ extra.name|title }}
@@ -85,17 +85,18 @@
       value="{{ extra.name }}"
     />
 
+    <!-- MAKE IMAGE AREA FLEXIBLE -->
     <label
-      class="form-check-label stretched-link"
+      class="form-check-label stretched-link d-flex flex-grow-1"
       for="selectExtra-{{ extra.name|slugify }}"
     >
       <img
-        class="card-img-top rounded-0"
+        class="card-img-top rounded-0 w-100"
         alt="{{ extra.name }}"
         src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/images/logo.png{% endif %}"
         title="{{ extra.name }}"
         onerror="this.onerror=null; this.src='https://placehold.co/225';"
-        style="height: 300px; object-fit: cover; width: 100%;"
+        style="object-fit: cover; height: 100%;"
       />
     </label>
 
@@ -129,7 +130,7 @@
     </div>
 
     <div
-      class="card-footer d-flex justify-content-center align-items-center position-relative z-2 mt-auto"
+      class="card-footer d-flex justify-content-center align-items-center position-relative z-2"
     >
       <h5
         class="card-title mb-0"
