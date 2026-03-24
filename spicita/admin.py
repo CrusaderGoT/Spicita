@@ -57,16 +57,6 @@ class AdminOrder(admin.ModelAdmin):
         obj.total_price = obj.calculate_price()
         super().save_model(request, obj, form, change)
 
-    def delete_model(self, request: HttpRequest, obj: Order) -> None:
-        obj.items.all().delete()
-        super().delete_model(request, obj)
-
-    def delete_queryset(self, request: HttpRequest, queryset: QuerySet[Order]) -> None:
-        if request.method == "POST":
-            for order in queryset:
-                order.items.all().delete()
-        super().delete_queryset(request, queryset)
-
 
 admin.site.register(Dish, AdminDish)
 admin.site.register(Extra, AdminExtra)
