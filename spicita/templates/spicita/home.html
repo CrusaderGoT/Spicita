@@ -21,8 +21,15 @@
               <div class="col-12 col-sm-6 col-md-4">
                 <div class="card shadow-sm h-100">
                   
-                  <img class="card-img-top" role="img" alt="{{dish.name}}" width="100%" src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}" title="{{dish.name}}" onerror="this.onerror=null; this.src='https://placehold.co/600';">
-                  
+                  <img 
+                    class="card-img-top"
+                    role="img"
+                    alt="{{dish.name}}" 
+                    src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}" 
+                    title="{{dish.name}}" 
+                    onerror="this.onerror=null; this.src='https://placehold.co/600';"
+                    style="height: 200px; object-fit: cover; width: 100%;"
+                  >
                   <div class="card-body">
                     <p class="card-text"><span>{{ dish.name|title }}</span><br/>{{ dish.description|linebreaks }}</p>
                     <div class="d-flex justify-content-between align-items-center">
