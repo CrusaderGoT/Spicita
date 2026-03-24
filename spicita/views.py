@@ -1,13 +1,14 @@
 import hashlib
 import hmac
 import json
-from django.utils.text import slugify
+
 import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -71,7 +72,7 @@ def buy_food(request: HttpRequest, dish_pk: int):
         if any(k.startswith("select-extra") for k in formData.keys()):
             for key, value in formData.items():
                 if key.startswith("select-extra"):
-                    extra_name = value
+                    extra_name = str(value if isinstance(value, str) else value[0])
                     amount = formData.get(f"extra-amount-{slugify(extra_name)}")
                     amount = int(amount) if amount else 1
                     extra_obj = Extra.objects.get(name=extra_name)

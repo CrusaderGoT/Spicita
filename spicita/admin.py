@@ -57,7 +57,9 @@ class AdminOrderItem(admin.ModelAdmin):
     list_filter = ["dish"]
     inlines = [OrderItemExtraInline]
 
-    def delete_queryset(self, request: HttpRequest, queryset: QuerySet[OrderItem]) -> None:
+    def delete_queryset(
+        self, request: HttpRequest, queryset: QuerySet[OrderItem]
+    ) -> None:
         order_item_ids = list(queryset.values_list("id", flat=True))
         OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
         super().delete_queryset(request, queryset)
