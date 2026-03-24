@@ -10,7 +10,7 @@ from django.db.models import DecimalField, F, Sum
 from users.models import Customer
 
 if TYPE_CHECKING:
-    from django.db.models import Manager
+    from django_stubs_ext.db.models.manager import RelatedManager
 
 # Create your models here.
 
@@ -45,7 +45,7 @@ class Extra(models.Model):
 class Order(models.Model):
     # Reverse relation declared for Pylance — populated by OrderItem's FK related_name
     if TYPE_CHECKING:
-        items: Manager[OrderItem]
+        items: RelatedManager[OrderItem]
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     address = models.TextField(max_length=300, blank=False)
     note = models.TextField(max_length=300, blank=True)
@@ -109,7 +109,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     if TYPE_CHECKING:
-        extras: Manager[OrderItemExtra]
+        extras: RelatedManager[OrderItemExtra]
     order = models.ForeignKey(
         "spicita.Order", on_delete=models.CASCADE, related_name="items"
     )

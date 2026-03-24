@@ -114,7 +114,7 @@ def init_pay(request: HttpRequest, order_ticket: str):
     amount = order.total_price * 100  # to convert to kobo
 
     payload = {
-        "email": "enememeka44@gmail.com",
+        "email": order.customer.user.email or "enememeka44@gmail.com",
         "amount": amount,
         "reference": str(order.ticket),
         "callback_url": request.build_absolute_uri(f"/verify/{order.ticket}"),
