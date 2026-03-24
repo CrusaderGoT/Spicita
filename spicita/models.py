@@ -82,7 +82,7 @@ class Order(models.Model):
 
         extras_count = (
             OrderItemExtra.objects.filter(order_item__order=self).aggregate(
-                total=Sum("quantity")
+                total=Sum(F("quantity") * F("order_item__quantity"), output_field=models.IntegerField())
             )["total"]
             or 0
         )
