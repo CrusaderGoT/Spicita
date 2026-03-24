@@ -133,53 +133,39 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // run location process before submission
-
   const form = document.querySelector("form");
 
   function getLocation() {
-    if (navigator.geolocation) {
-      // Geolocation is supported, proceed to request location
-      navigator.geolocation.getCurrentPosition(setPositionToForm, showError);
-    } else {
-      // Geolocation is not supported
-      alert("Geolocation is not supported by this browser.");
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported by this browser."));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    try {
+      const position = await getLocation();
+
+      document.getElementById("latitudeInput").value = position.coords.latitude;
+      document.getElementById("longitudeInput").value =
+        position.coords.longitude;
+
+      form.submit();
+    } catch (error) {
+      const messages = {
+        1: "Location permission was denied.",
+        2: "Location information is unavailable.",
+        3: "Location request timed out.",
+      };
+      alert(
+        messages[error.code] ?? "An unknown error occurred getting location."
+      );
     }
-  }
-
-  function setPositionToForm(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    const latitudeInput = document.getElementById("latitudeInput");
-    const longitudeInput = document.getElementById("longitudeInput");
-
-    latitudeInput.value = latitude;
-    longitudeInput.value = longitude;
-
-    form.submit();
-  }
-
-  function showError(error) {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        alert("User denied the request for Geolocation.");
-        break;
-      case error.POSITION_UNAVAILABLE:
-        alert("Location information is unavailable.");
-        break;
-      case error.TIMEOUT:
-        alert("The request to get user location timed out.");
-        break;
-      case error.UNKNOWN_ERROR:
-        alert("An unknown error occurred when getting location.");
-        break;
-    }
-  }
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault(); // Stop the submission
-
-    getLocation();
   });
 
   // disable state management for offline
