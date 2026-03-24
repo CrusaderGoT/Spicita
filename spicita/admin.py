@@ -5,7 +5,7 @@ from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 
 from spicita.logic.file_handler import del_temp_files
-from spicita.models import Dish, Extra, Order
+from spicita.models import Dish, Extra, Order, OrderItem, OrderItemExtra
 
 
 # For Dish Model
@@ -57,14 +57,13 @@ class AdminOrder(admin.ModelAdmin):
         obj.total_price = obj.calculate_price()
         super().save_model(request, obj, form, change)
 
-
     def delete_queryset(self, request: HttpRequest, queryset: QuerySet[Order]) -> None:
-    order_item_ids = list(
-        OrderItem.objects.filter(order__in=queryset).values_list("id", flat=True)
-    )
-    OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
-    OrderItem.objects.filter(id__in=order_item_ids).delete()
-    super().delete_queryset(request, queryset)
+        order_item_ids = list(
+            OrderItem.objects.filter(order__in=queryset).values_list("id", flat=True)
+        )
+        OrderItemExtra.objects.filter(order_item_id__in=order_item_ids).delete()
+        OrderItem.objects.filter(id__in=order_item_ids).delete()
+        super().delete_queryset(request, queryset)
 
 
 admin.site.register(Dish, AdminDish)
