@@ -94,12 +94,6 @@ class Order(models.Model):
         self.total_price = self.calculate_price()
         super().save(*args, **kwargs)
 
-    @override
-    def delete(self, using=None, keep_parents=False):
-        # Delete associated OrderItem objects
-        self.items.all().delete()
-        # Call the delete method of the base class
-        return super().delete(using=using, keep_parents=keep_parents)
 
     @override
     def __str__(self) -> str:
