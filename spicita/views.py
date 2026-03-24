@@ -115,7 +115,7 @@ def init_pay(request: HttpRequest, order_ticket: str):
 
     payload = {
         "email": order.customer.user.email or "enememeka44@gmail.com",
-        "amount": amount,
+        "amount": str(amount),
         "reference": str(order.ticket),
         "callback_url": request.build_absolute_uri(f"/verify/{order.ticket}"),
         "channels": ["card", "bank", "ussd", "bank_transfer"],
