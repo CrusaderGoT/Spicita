@@ -67,7 +67,7 @@ class Order(models.Model):
 
         extras_total = OrderItemExtra.objects.filter(order_item__order=self).aggregate(
             total=Sum(
-                F("extra__price") * F("quantity") * F("order_item__quantity"),
+                F("extra__price") * F("quantity"),
                 output_field=DecimalField(),
             )
         )["total"] or Decimal("0")
@@ -82,7 +82,7 @@ class Order(models.Model):
 
         extras_count = (
             OrderItemExtra.objects.filter(order_item__order=self).aggregate(
-                total=Sum(F("quantity") * F("order_item__quantity"), output_field=models.IntegerField())
+                total=Sum("quantity")
             )["total"]
             or 0
         )
@@ -120,7 +120,7 @@ class OrderItem(models.Model):
     def total_price(self) -> Decimal:
         dish_total = self.dish.price * self.quantity
         extras_total = sum(
-            ie.extra.price * ie.quantity * self.quantity
+            ie.extra.price * ie.quantity
             for ie in self.extras.select_related("extra").all()
         )
         return dish_total + extras_total
