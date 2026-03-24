@@ -28,7 +28,7 @@
                     src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}" 
                     title="{{dish.name}}" 
                     onerror="this.onerror=null; this.src='https://placehold.co/600';"
-                    style="height: 200px; object-fit: cover; width: 100%;"
+                    style="height: 300px; object-fit: cover; width: 100%;"
                   >
                   <div class="card-body">
                     <p class="card-text"><span>{{ dish.name|title }}</span><br/>{{ dish.description|linebreaks }}</p>

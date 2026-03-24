@@ -91,10 +91,10 @@
               <img
                 class="card-img-top rounded-0"
                 alt="{{ extra.name }}"
-                width="100%"
                 src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/images/logo.png{% endif %}"
                 title="{{ extra.name }}"
                 onerror="this.onerror=null; this.src='https://placehold.co/225';"
+                style="height: 400px; object-fit: cover; width: 100%;"
               />
             </label>
 
