@@ -1,196 +1,236 @@
 "use strict";
+
 document.addEventListener("DOMContentLoaded", function () {
-  // interactivity for dish amount display
+  // ======================
+  // SHARED HELPERS
+  // ======================
+
+  /**
+   * Safely extracts a numeric price from an element.
+   * Prefers `data-price` attribute (recommended for future-proofing),
+   * falls back to parsing textContent.
+   */
+  const parsePrice = (element) => {
+    if (!element) return 0;
+    const raw = element.dataset.price ?? element.textContent;
+    const cleaned = raw.replace(/[^0-9.]/g, "");
+    const price = parseFloat(cleaned);
+    return isNaN(price) ? 0 : price;
+  };
+
+  /**
+   * Formats a number as Nigerian Naira with proper thousands separator.
+   */
+  const formatNaira = (amount) => `₦${amount.toLocaleString("en-NG")}`;
+
+  // ======================
+  // 1. MAIN DISH QUANTITY & PRICE UPDATER
+  // ======================
+
   const inputRange = document.getElementById("dishAmtRange");
   const inputRangeDisplay = document.getElementById("dishRangeDisplay");
   const dishAmtPrice = document.getElementById("dishAmtPrice");
   const dishAmtPriceDisplay = document.getElementById("dishAmtPriceDisplay");
 
   if (inputRange && inputRangeDisplay) {
-    const updateDisplay = () => {
+    const updateDishDisplay = () => {
       const amount = inputRange.value;
       inputRangeDisplay.textContent = amount;
 
-      if (dishAmtPrice) {
-        try {
-          // parse only the number/float values;
-          const price = parseFloat(
-            dishAmtPrice.textContent.replace(/[^0-9.]/g, "")
-          );
-          const multiplier = parseInt(inputRange.value.replace(/[^0-9.]/g, ""));
+      if (dishAmtPrice && dishAmtPriceDisplay) {
+        const basePrice = parsePrice(dishAmtPrice);
+        const multiplier = parseInt(amount, 10) || 1; // range.value is always numeric
+        const newPrice = basePrice * multiplier;
 
-          const newPrice = price * multiplier;
-          dishAmtPriceDisplay.textContent = `₦${newPrice.toLocaleString()}`; // locale str formats number properly, 1000 -> 1,000
-        } catch (e) {
-          console.warn("Failed to update new dish price");
-        }
+        dishAmtPriceDisplay.textContent = formatNaira(newPrice);
       }
     };
-    inputRange.addEventListener("input", updateDisplay);
-    updateDisplay();
+
+    inputRange.addEventListener("input", updateDishDisplay);
+    // Initial render
+    updateDishDisplay();
   } else {
-    console.warn("dishAmtRange or dishRangeDisplay element not found");
+    console.warn("Main dish range elements not found");
   }
 
-  // extras cards interactivity
+  // ======================
+  // 2. EXTRA CARDS (checkbox + range + price sync)
+  // ======================
+
   function initExtraCard(card) {
     const checkbox = card.querySelector('input[type="checkbox"]');
     const range = card.querySelector('input[type="range"]');
     const display = card.querySelector('[id^="extraRangeDisplay-"]');
-    const unitPrice = card.querySelector('[id^="extraAmtPrice-"]');
+    const unitPriceEl = card.querySelector('[id^="extraAmtPrice-"]');
     const priceDisplay = card.querySelector('[id^="extraAmtPriceDisplay-"]');
     const amountBody = card.querySelector('[id^="extraAmtBody-"]');
 
-    if (!checkbox || !range || !display || !unitPrice || !priceDisplay) return;
+    if (!checkbox || !range || !display || !priceDisplay) return;
 
-    const updatePrice = () => {
-      const amount = parseInt(range.value, 10);
+    const updateExtraPrice = () => {
+      const amount = parseInt(range.value, 10) || 1;
       display.textContent = amount;
 
-      // Prefer data-price attribute; fall back to parsing text content
-      const raw = unitPrice.dataset.price ?? unitPrice.textContent;
-      const price = parseFloat(raw.replace(/[^0-9.]/g, ""));
-
-      if (!isNaN(price)) {
-        priceDisplay.textContent = `₦${(price * amount).toLocaleString()}`;
-      } else {
-        console.warn("Could not parse unit price for", card);
-      }
+      const unitPrice = parsePrice(unitPriceEl);
+      priceDisplay.textContent = formatNaira(unitPrice * amount);
     };
 
-    range.addEventListener("input", updatePrice);
+    // Range listener
+    range.addEventListener("input", updateExtraPrice);
 
+    // Checkbox toggles card style, enables range, shows/hides amount controls
     checkbox.addEventListener("change", () => {
-      card.classList.toggle("bg-success", checkbox.checked);
-      card.classList.toggle("shadow", checkbox.checked);
-      range.disabled = !checkbox.checked;
-      amountBody.style.display = checkbox.checked ? "block" : "none";
+      const isChecked = checkbox.checked;
 
-      if (!checkbox.checked) range.value = 1;
+      card.classList.toggle("bg-success", isChecked);
+      card.classList.toggle("shadow", isChecked);
 
-      updatePrice(); // sync on both check and uncheck
+      range.disabled = !isChecked;
+      amountBody.style.display = isChecked ? "block" : "none";
+
+      // Reset to default quantity when unchecked (standard UX)
+      if (!isChecked) range.value = "1";
+
+      updateExtraPrice();
     });
 
-    // Initialise disabled state and body visibility
+    // ======================
+    // INITIAL STATE (FIXED BUG)
+    // ======================
+    // Previously this always hid the amountBody regardless of checkbox state
     range.disabled = !checkbox.checked;
-    amountBody.style.display = checkbox.checked ? "none" : "none";
-    updatePrice();
+    amountBody.style.display = checkbox.checked ? "block" : "none";
+    updateExtraPrice(); // sync display immediately
   }
 
+  // Initialize every extra card
   document.querySelectorAll('[id^="selectExtra-"]').forEach((checkbox) => {
     const card = checkbox.closest(".card");
     if (card) initExtraCard(card);
   });
 
-  // confirm order modal UI/UX
+  // ======================
+  // 3. CONFIRM ORDER MODAL – POPULATE ITEMS LIST
+  // ======================
+
   function createOrderItem(name, amount) {
     const li = document.createElement("li");
-    li.className = "list-group-item";
+    li.className = "list-group-item d-flex justify-content-between align-items-center";
 
-    const span = document.createElement("span");
-    span.textContent = name;
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = name;
 
-    const sub = document.createElement("sub");
-    sub.textContent = ` x ${amount}`;
+    const amountSpan = document.createElement("small");
+    amountSpan.className = "text-muted";
+    amountSpan.textContent = `× ${amount}`;
 
-    li.appendChild(span);
-    li.appendChild(sub);
+    li.appendChild(nameSpan);
+    li.appendChild(amountSpan);
     return li;
   }
 
   const continueToOrderBtn = document.getElementById("continueToOrder");
 
   if (continueToOrderBtn) {
-    continueToOrderBtn.addEventListener("click", function () {
+    continueToOrderBtn.addEventListener("click", () => {
       const orderedItemList = document.getElementById("itemsList");
-      const mainOrder = document.getElementById("dishName");
-      const extras = document.querySelectorAll('[id^="selectExtra-"]');
+      const mainDishName = document.getElementById("dishName");
+      const extraCheckboxes = document.querySelectorAll('[id^="selectExtra-"]');
 
-      if (!orderedItemList || !mainOrder) return;
+      if (!orderedItemList || !mainDishName) return;
 
+      // Clear previous list
       orderedItemList.replaceChildren();
 
-      // Add main dish
+      // Main dish
       orderedItemList.appendChild(
-        createOrderItem(mainOrder.textContent, inputRange.value)
+        createOrderItem(mainDishName.textContent.trim(), inputRange?.value || "1")
       );
 
-      // Add selected extras
-      extras.forEach((checkbox) => {
-        if (!checkbox.checked) return;
+      // Selected extras only
+      extraCheckboxes.forEach((cb) => {
+        if (!cb.checked) return;
 
-        const card = checkbox.closest(".card");
-        const extraName = card.querySelector('[id^="extraName-"]');
+        const card = cb.closest(".card");
+        if (!card) return;
+
+        const extraNameEl = card.querySelector('[id^="extraName-"]');
         const extraRange = card.querySelector('input[type="range"]');
 
-        if (extraName && extraRange) {
+        if (extraNameEl && extraRange) {
           orderedItemList.appendChild(
-            createOrderItem(extraName.textContent, extraRange.value)
+            createOrderItem(extraNameEl.textContent.trim(), extraRange.value)
           );
         }
       });
     });
   }
 
-  // run location process before submission
+  // ======================
+  // 4. FORM SUBMISSION WITH GEOLOCATION
+  // ======================
+
   const form = document.querySelector("form");
 
-  function getLocation() {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error("Geolocation is not supported by this browser."));
-        return;
+  if (form) {
+    const getLocation = () =>
+      new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error("Geolocation not supported"));
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { timeout: 10000, enableHighAccuracy: true } // improved UX
+        );
+      });
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      try {
+        const position = await getLocation();
+
+        document.getElementById("latitudeInput").value = position.coords.latitude;
+        document.getElementById("longitudeInput").value = position.coords.longitude;
+
+        form.submit(); // re-submit with coordinates
+      } catch (error) {
+        const messages = {
+          1: "Location permission was denied. Delivery address cannot be verified.",
+          2: "Location information is unavailable.",
+          3: "Location request timed out.",
+        };
+        alert(messages[error.code] ?? "Unable to get your location. Please try again.");
       }
-      navigator.geolocation.getCurrentPosition(resolve, reject);
     });
   }
 
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  // ======================
+  // 5. ONLINE/OFFLINE STATUS (DISABLE SUBMIT WHEN OFFLINE)
+  // ======================
 
-    try {
-      const position = await getLocation();
-
-      document.getElementById("latitudeInput").value = position.coords.latitude;
-      document.getElementById("longitudeInput").value =
-        position.coords.longitude;
-
-      form.submit();
-    } catch (error) {
-      const messages = {
-        1: "Location permission was denied.",
-        2: "Location information is unavailable.",
-        3: "Location request timed out.",
-      };
-      alert(
-        messages[error.code] ?? "An unknown error occurred getting location."
-      );
-    }
-  });
-
-  // disable state management for offline
-  const btn = document.getElementById("continueOrderBtn");
+  const continueOrderBtn = document.getElementById("continueOrderBtn");
   const statusBanner = document.getElementById("onlineStatus");
 
-  function updateOnlineStatus() {
+  const updateOnlineStatus = () => {
     const isOnline = navigator.onLine;
 
-    // Toggle button
-    if (btn) {
-      btn.disabled = !isOnline;
-      btn.setAttribute("aria-disabled", String(!isOnline));
+    if (continueOrderBtn) {
+      continueOrderBtn.disabled = !isOnline;
+      continueOrderBtn.setAttribute("aria-disabled", String(!isOnline));
     }
 
-    // Toggle alert banner
     if (statusBanner) {
       statusBanner.classList.toggle("d-none", isOnline);
       statusBanner.classList.toggle("d-flex", !isOnline);
     }
-  }
+  };
 
   window.addEventListener("online", updateOnlineStatus);
   window.addEventListener("offline", updateOnlineStatus);
 
-  // Run immediately so initial state is correct on page load
+  // Initial state
   updateOnlineStatus();
 });
