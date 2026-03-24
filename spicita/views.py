@@ -1,7 +1,7 @@
 import hashlib
 import hmac
 import json
-
+from django.utils.text import slugify
 import requests
 from django.conf import settings
 from django.contrib import messages
@@ -72,7 +72,7 @@ def buy_food(request: HttpRequest, dish_pk: int):
             for key, value in formData.items():
                 if key.startswith("select-extra"):
                     extra_name = value
-                    amount = formData.get(f"extra-amount-{extra_name}")
+                    amount = formData.get(f"extra-amount-{slugify(extra_name)}")
                     amount = int(amount) if amount else 1
                     extra_obj = Extra.objects.get(name=extra_name)
                     order_item_extra_obj, created = (
