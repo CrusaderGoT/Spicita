@@ -3,21 +3,47 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spicita</title>
     {% load static %}
     {% load django_bootstrap5 %}
+
+    <!-- Primary SEO -->
+    <title>{% block title %}Spicita — Taste to Spice You Up!{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Order delicious food from Spicita. Fast delivery, great taste — spice up your day.{% endblock %}" />
+    <meta name="keywords" content="{% block meta_keywords %}food delivery, spicita, order food online{% endblock %}" />
+    <meta name="author" content="Spicita" />
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}" />
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn previews) -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+    <meta property="og:title" content="{% block og_title %}Spicita — Taste to Spice You Up!{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}Order delicious food from Spicita. Fast delivery, great taste.{% endblock %}" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:site_name" content="Spicita" />
+    <meta property="og:image" content="{% block og_image %}{% static 'images/logo.png' %}{% endblock %}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{% block twitter_title %}Spicita — Taste to Spice You Up!{% endblock %}" />
+    <meta name="twitter:description" content="{% block twitter_description %}Order delicious food from Spicita.{% endblock %}" />
+    <meta name="twitter:image" content="{% block twitter_image %}{% static 'images/logo.png' %}{% endblock %}" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/logo.png' %}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/logo.png' %}" />
+    <link rel="apple-touch-icon" href="{% static 'images/logo.png' %}" />
+
     {% bootstrap_css %}
     {% bootstrap_javascript %}
   </head>
 
   <body class="d-flex flex-column vh-100">
-    <header>
-      <div class="navbar shadow-sm">
+    <header role="banner">
+      <nav class="navbar shadow-sm" aria-label="Main navigation">
         <div class="container-fluid">
-          <a
-            href="{% url 'home' %}"
-            class="navbar-brand d-flex align-items-center"
-          >
+          <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
             <strong>Spicita</strong>
           </a>
 
@@ -27,90 +53,53 @@
               type="button"
               aria-expanded="false"
               data-bs-toggle="dropdown"
-              aria-label="Toggle theme (auto)"
+              aria-label="Toggle colour theme"
             >
               Toggle theme
-              <span class="visually-hidden" id="bd-theme-text"
-              >Toggle theme</span
-                >
-              </button>
-
-              <ul
-                class="dropdown-menu dropdown-menu-end shadow"
-                aria-labelledby="bd-theme-text"
-              >
-                <li>
-                  <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="light"
-                    aria-pressed="false"
-                  >
-                    Light
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center"
-                    data-bs-theme-value="dark"
-                    aria-pressed="false"
-                  >
-                    Dark
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    class="dropdown-item d-flex align-items-center active"
-                    data-bs-theme-value="auto"
-                    aria-pressed="true"
-                  >
-                    Auto
-                  </button>
-                </li>
-              </ul>
-            </div>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" role="menu">
+              <li>
+                <button type="button" class="dropdown-item" data-bs-theme-value="light" aria-pressed="false" role="menuitem">Light</button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item" data-bs-theme-value="dark" aria-pressed="false" role="menuitem">Dark</button>
+              </li>
+              <li>
+                <button type="button" class="dropdown-item active" data-bs-theme-value="auto" aria-pressed="true" role="menuitem">Auto</button>
+              </li>
+            </ul>
           </div>
         </div>
-      </header>
+      </nav>
+    </header>
 
-      <main class="container p-4">
-        {% bootstrap_messages %}
-        {% block content %} {% endblock content %}
-      </main>
+    <main class="container p-4" id="main-content" role="main">
+      {% bootstrap_messages %}
+      {% block content %}{% endblock content %}
+    </main>
 
+    <footer class="text-body-secondary mt-auto container-fluid d-flex flex-column" role="contentinfo" aria-label="Site footer">
+      <hr />
 
-      <footer class="text-body-secondary mt-auto container-fluid d-flex flex-column mt-auto">
-        <hr />
+      <p class="float-end m-1">
+        <a href="#main-content" class="text-body-emphasis">&uArr; Back to top</a>
+      </p>
 
-        <p class="float-end m-1">
-          <a href="#" class="text-body-emphasis">&uArr; Back to top</a>
-        </p>
+      <div class="p-2">
+        <h4 class="text-md-center">Contact</h4>
+        <ul class="list-unstyled d-flex flex-column flex-md-row justify-content-evenly">
+          <li><a href="https://twitter.com/spicita" rel="noopener noreferrer" aria-label="Spicita on Twitter">Twitter</a></li>
+          <li><a href="https://facebook.com/spicita" rel="noopener noreferrer" aria-label="Spicita on Facebook">Facebook</a></li>
+          <li><a href="mailto:hello@spicita.com" aria-label="Email Spicita">Email</a></li>
+        </ul>
+      </div>
 
-        <div class="p-2">
-          <h4 class="text-md-center">Contact</h4>
-          <ul class="list-unstyled d-flex flex-column flex-md-row  justify-content-evenly">
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Facebook</a></li>
-            <li><a href="#">Email</a></li>
-          </ul>
-        </div>
+      <p class="mb-3 fw-bold">
+        <small>&copy; {% now "Y" %} Spicita, taste to spice you up!</small>
+      </p>
+    </footer>
 
-        <div>
-
-
-          <p class="mb-3 fw-bold">
-            &copy; Spicita, taste to spice you up!
-          </p>
-
-        </div>
-
-      </footer>
-
-      {% block scripts %}
-      {% endblock scripts %}
-      
-      <script src="{% static 'js/modeToggle.js' %}" defer></script>
-    </body>
-  </html>
+    {% block scripts %}{% endblock scripts %}
+    <script src="{% static 'js/modeToggle.js' %}" defer></script>
+  </body>
+</html>

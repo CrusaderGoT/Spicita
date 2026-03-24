@@ -1,5 +1,10 @@
 {% extends 'spicita/base.html' %}
 
+{% block title %}Order Status {% with order.items.all|first as dish_item %} {{ dish_item.name }} {% endwith %} | Spicita{% endblock %}
+{% block meta_description %}Check you Order,  whereabouts...{% endblock %}
+{% block og_image %}{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}{% endblock %}
+
+
 {% block content %}
 
 <div>
