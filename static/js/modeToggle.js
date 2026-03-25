@@ -59,7 +59,14 @@
       }
     });
 
-  window.addEventListener("DOMContentLoaded", () => {
+  // ✅ Runs immediately if DOM is already parsed (e.g. script is deferred/bundled),
+  // otherwise waits for DOMContentLoaded — fixes "works in dev, dead in prod".
+  const onReady = (fn) => {
+    if (document.readyState !== "loading") fn();
+    else window.addEventListener("DOMContentLoaded", fn);
+  };
+
+  onReady(() => {
     showActiveTheme(getPreferredTheme());
 
     document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {

@@ -98,20 +98,19 @@ document.addEventListener("DOMContentLoaded", function () {
     return li;
   }
 
-  let expectedTotalPrice = 0;
-
-  function addItemTotalPrice(price, range) {
-    const itemPrice = price * range;
-
-    if (!isNaN(itemPrice)) {
-      expectedTotalPrice += itemPrice;
-    }
-  }
-
   const continueToOrderBtn = document.getElementById("continueToOrder");
 
   if (continueToOrderBtn) {
     continueToOrderBtn.addEventListener("click", function () {
+      let expectedTotalPrice = 0;
+      function addItemTotalPrice(price, range) {
+        const itemPrice = price * range;
+
+        if (!isNaN(itemPrice)) {
+          expectedTotalPrice += itemPrice;
+        }
+      }
+
       const orderedItemList = document.getElementById("itemsList");
       const mainOrder = document.getElementById("dishName");
       const extras = document.querySelectorAll('[id^="selectExtra-"]');
@@ -169,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPriceDisplay = document.getElementById("totalPriceDisplay");
         totalPriceDisplay.className = "text-muted fw-bold small float-end";
         totalPriceDisplay.textContent = `Total - ₦${expectedTotalPrice.toLocaleString()}`;
-        totalPriceDisplay.appendChild(p);
       }
     });
   }
