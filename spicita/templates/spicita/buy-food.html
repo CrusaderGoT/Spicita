@@ -15,7 +15,7 @@
     <section
       class="text-center d-flex align-items-center justify-content-center"
     >
-      <div class="card mb-4 rounded-3 shadow-sm">
+      <div class="card mb-4 rounded-3 shadow-sm"  style=" min-width: 300px; min-height: 300px; max-width: 400px;">
         <div
           class="card-header py-3"
           data-bs-toggle="tooltip"
@@ -66,82 +66,82 @@
           delicious meal.
         </p>
       </div>
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-large-4">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         {% for extra in extras %}
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-  <div class="card rounded-3 shadow-sm text-center mb-4 h-100 d-flex flex-column">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card rounded-3 shadow-sm text-center mb-4 h-100 d-flex flex-column mx-auto" style="min-width: 200px; min-height: 200px;  max-width: 300px;">
 
-    <div class="card-header py-2">
-      <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">
-        {{ extra.name|title }}
-      </h4>
-    </div>
+              <div class="card-header py-2">
+                <h4 id="extraName-{{ extra.name|slugify }}" class="fw-normal">
+                  {{ extra.name|title }}
+                </h4>
+              </div>
 
-    <input
-      type="checkbox"
-      class="form-check-input visually-hidden"
-      id="selectExtra-{{ extra.name|slugify }}"
-      name="select-extra-{{ extra.name|slugify }}"
-      value="{{ extra.name }}"
-    />
+              <label
+                class="form-check-label d-flex flex-grow-1"
+                for="selectExtra-{{ extra.name|slugify }}"
+              >
+                <img
+                  class="card-img-top rounded-0"
+                  alt="{{ extra.name }}"
+                  src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/images/logo.png{% endif %}"
+                  title="{{ extra.name }}"
+                  onerror="this.onerror=null; this.src='https://placehold.co/225';"
+                  style="object-fit: cover; height: 100%; min-height: 300px;"
+                />
 
-    <!-- MAKE IMAGE AREA FLEXIBLE -->
-    <label
-      class="form-check-label stretched-link d-flex flex-grow-1"
-      for="selectExtra-{{ extra.name|slugify }}"
-    >
-      <img
-        class="card-img-top rounded-0 w-100"
-        alt="{{ extra.name }}"
-        src="{% if extra.icon %}{{ extra.icon.url }}{% else %}/static/images/logo.png{% endif %}"
-        title="{{ extra.name }}"
-        onerror="this.onerror=null; this.src='https://placehold.co/225';"
-        style="object-fit: cover; height: 100%;"
-      />
-    </label>
+                <input
+                  type="checkbox"
+                  class="form-check-input visually-hidden"
+                  id="selectExtra-{{ extra.name|slugify }}"
+                  name="select-extra-{{ extra.name|slugify }}"
+                  value="{{ extra.name }}"
+                />
+              </label>
 
-    <div
-      id="extraAmtBody-{{ extra.name|slugify }}"
-      class="card-body z-2 position-relative fs-6"
-    >
-      <label
-        for="extraAmtRange-{{ extra.name|slugify }}"
-        class="form-label"
-      >
-        Amount
-      </label>
+              <div
+                id="extraAmtBody-{{ extra.name|slugify }}"
+                class="card-body z-2 position-relative fs-6"
+              >
+                <label
+                  for="extraAmtRange-{{ extra.name|slugify }}"
+                  class="form-label"
+                >
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="1"
+                    max="20"
+                    step="1"
+                    value="1"
+                    id="extraAmtRange-{{ extra.name|slugify }}"
+                    name="extra-amount-{{ extra.name|slugify }}"
+                  />
+                  Amount
+                </label>
 
-      <input
-        type="range"
-        class="form-range"
-        min="1"
-        max="20"
-        step="1"
-        value="1"
-        id="extraAmtRange-{{ extra.name|slugify }}"
-        name="extra-amount-{{ extra.name|slugify }}"
-      />
+                <div>
+                  <span id="extraRangeDisplay-{{ extra.name|slugify }}">1</span>
+                  <sub>x</sub>
+                  <sub id="extraAmtPrice-{{ extra.name|slugify }}">
+                    {{ extra.price|floatformat }}
+                  </sub>
+                </div>
+              </div>
 
-      <span id="extraRangeDisplay-{{ extra.name|slugify }}">1</span>
-      <sub>x</sub>
-      <sub id="extraAmtPrice-{{ extra.name|slugify }}">
-        {{ extra.price|floatformat }}
-      </sub>
-    </div>
+              <div
+                class="card-footer d-flex justify-content-center align-items-center position-relative z-2"
+              >
+                <h5
+                  class="card-title mb-0"
+                  id="extraAmtPriceDisplay-{{ extra.name|slugify }}"
+                >
+                  &#x20A6;{{ extra.price|floatformat }}
+                </h5>
+              </div>
 
-    <div
-      class="card-footer d-flex justify-content-center align-items-center position-relative z-2"
-    >
-      <h5
-        class="card-title mb-0"
-        id="extraAmtPriceDisplay-{{ extra.name|slugify }}"
-      >
-        &#x20A6;{{ extra.price|floatformat }}
-      </h5>
-    </div>
-
-  </div>
-</div>
+            </div>
+          </div>
         {% endfor %}
       </div>
     </section>

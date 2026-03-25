@@ -12,20 +12,20 @@
       </div>
     </section>
 
-    <section class="container bg-body-tertiary">
-      <div class="album pb-4">
+    <section class="bg-body-tertiary">
+      <div class="p-4">
         {%if dishes%}
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 
             {% for dish in dishes %}
-              <div class="col-12 col-sm-6 col-md-4">
-                <div class="card shadow-sm h-100">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm mx-auto" style="min-width: 300px; min-height: 300px; max-width: 400px;">
                   
                   <img 
                     class="card-img-top"
                     role="img"
                     alt="{{dish.name}}" 
-                    src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/default-icon.png{% endif %}" 
+                    src="{% if dish.icon %}{{ dish.icon.url }}{% else %}/static/images/logo.png{% endif %}" 
                     title="{{dish.name}}" 
                     onerror="this.onerror=null; this.src='https://placehold.co/600';"
                     style="height: 300px; object-fit: cover; width: 100%;"

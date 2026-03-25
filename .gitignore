@@ -2,6 +2,6 @@ __pycache__/
 .venv
 static/examples
 .env*
-db.sqlite3
-static/food_icons/**
-static/extra_icons/** 
+db.sqlite3 
+media/food_icons/**
+media/extra_icons/**
