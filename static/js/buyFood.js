@@ -98,6 +98,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return li;
   }
 
+  let expectedTotalPrice = 0;
+
+  function addItemTotalPrice(price, range) {
+    const itemPrice = price * range;
+
+    if (!isNaN(itemPrice)) {
+      expectedTotalPrice += itemPrice;
+    }
+  }
+
   const continueToOrderBtn = document.getElementById("continueToOrder");
 
   if (continueToOrderBtn) {
@@ -115,6 +125,17 @@ document.addEventListener("DOMContentLoaded", function () {
         createOrderItem(mainOrder.textContent, inputRange.value)
       );
 
+      // add main dish total price
+      // parse only the number/float values;
+      const dishPrice = parseFloat(
+        dishAmtPrice.textContent.replace(/[^0-9.]/g, "")
+      );
+      const dishMultiplier = parseInt(inputRange.value.replace(/[^0-9.]/g, ""));
+
+      if (dishPrice && dishMultiplier) {
+        addItemTotalPrice(dishPrice, dishMultiplier);
+      }
+
       // Add selected extras
       extras.forEach((checkbox) => {
         if (!checkbox.checked) return;
@@ -128,7 +149,28 @@ document.addEventListener("DOMContentLoaded", function () {
             createOrderItem(extraName.textContent, extraRange.value)
           );
         }
+
+        // add extra item total price
+        const extraAmtPrice = card.querySelector('[id^="extraAmtPrice-"]');
+        // parse only the number/float values;
+        const extraPrice = parseFloat(
+          extraAmtPrice.textContent.replace(/[^0-9.]/g, "")
+        );
+        const extraMultiplier = parseInt(
+          extraRange.value.replace(/[^0-9.]/g, "")
+        );
+
+        if (extraPrice && extraMultiplier) {
+          addItemTotalPrice(extraPrice, extraMultiplier);
+        }
       });
+
+      if (expectedTotalPrice > 0) {
+        const totalPriceDisplay = document.getElementById("totalPriceDisplay");
+        totalPriceDisplay.className = "text-muted fw-bold small float-end";
+        totalPriceDisplay.textContent = `Total - ₦${expectedTotalPrice.toLocaleString()}`;
+        totalPriceDisplay.appendChild(p);
+      }
     });
   }
 

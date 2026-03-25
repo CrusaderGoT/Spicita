@@ -37,6 +37,7 @@
     <link rel="apple-touch-icon" href="{% static 'images/logo.png' %}" />
 
     {% bootstrap_css %}
+    {% bootstrap_javascript %}
   </head>
 
   <body class="d-flex flex-column vh-100">
@@ -114,7 +115,6 @@
     </footer>
 
     {% block scripts %}{% endblock scripts %}
-    {% bootstrap_javascript %}
     <script src="{% static 'js/modeToggle.js' %}"></script>
   </body>
 </html>
